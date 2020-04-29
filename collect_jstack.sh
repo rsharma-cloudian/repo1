@@ -19,13 +19,13 @@ echo "collecting 5 samples of top threads for Cassandra PID: $cassandra_PID .."
 echo "collecting 5 samples of top threads for StorageServer PID: $storageserver_PID .."
  top -b -n 5 -H -p $storageserver_PID > $LOG_DIR/top-threads_hs_"$node"_$ts.out
 echo "collecting 5 samples of top threads for S3 PID: $s3_PID .."
- top -b -n 5 -H -p $s3_PID > $LOG_DIR/top_threads_s3_"$node"_$ts.out
+ top -b -n 5 -H -p $s3_PID > $LOG_DIR/top-threads_s3_"$node"_$ts.out
 
 ##collect jstack
 echo "collecting jstack for Cassandra PID: $cassandra_PID .."
 sudo -u cloudian jstack -J-d64 $cassandra_PID  > $LOG_DIR/jstack-cassandra_"$node"_$ts.out
 sudo -u cloudian jstack -J-d64 $storageserver_PID  > $LOG_DIR/jstack-hs_"$node"_$ts.out
-sudo -u cloudian jstack -J-d64 $s3_PID > $LOG_DIR/jstack_s3_"$node"_$ts.out
+sudo -u cloudian jstack -J-d64 $s3_PID > $LOG_DIR/jstack-s3_"$node"_$ts.out
 
 ##6 Files are generated in $LOG_DIR
 echo "Files Generated:"

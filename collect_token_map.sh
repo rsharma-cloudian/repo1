@@ -36,7 +36,6 @@ function fetch_internal_interface {
            exit 1;
         fi
 
-# return $INTERFACE_CLMN
  echo  $INTERFACE_CLMN
 
 }

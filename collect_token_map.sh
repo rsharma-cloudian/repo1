@@ -2,7 +2,7 @@
 ##################################################################################################################
 ##Purpose: Captures Token Mapping from all nodes in the cluster (non-interactively)
 ##based on the output of `hsstool ring`
-##Usage: ./token_map.sh
+##Usage: ./collect_token_maps.sh
 #Version: 1.2
 #Changelog: 10/07/2020:Added handling for condition where cassandra/redis etc use a separate internal n/w interface
 #Comments/Bugs:rsharma@cloudian.com
@@ -15,9 +15,9 @@ CASSANDRA_IP=$(ss -tlnp| grep $CASSANDRA_PID | grep $CASSANDRA_PORT  |awk '{prin
 CASSANDRA_INTERFACE=$(ip a | grep $CASSANDRA_IP | awk '{print $7}')
 
 TSTAMP=$(date "+%Y.%m.%d-%H.%M.%S");
-echo "cassandra PID:" $CASSANDRA_PID
-echo "cassandra IP:" $CASSANDRA_IP
-echo "cassandra Interface:" $CASSANDRA_INTERFACE
+echo "cassandra PID on this node:" $CASSANDRA_PID
+echo "cassandra IP on this node:" $CASSANDRA_IP
+echo "cassandra Interface used:" $CASSANDRA_INTERFACE
 
 function fetch_internal_interface {
 
@@ -44,7 +44,7 @@ IF_COLUMN=$(fetch_internal_interface)
 echo -en  "Using column:" $IF_COLUMN
 echo -en " for ethernet interface in $SERVICEMAP_FILE"
 echo -e "\n"
-echo "Saving token maps .."
+echo "Saving token maps for ALL nodes.."
 
 for i in `cat $SERVICEMAP_FILE | grep interfaces | awk -v N="$IF_COLUMN" '{print $N}' | sed 's/\"//g'|sed 's/\,//g'`;
     do

@@ -1,4 +1,8 @@
 #!/usr/bin/bash
+####Purpose: Generates csv list to provide listing of large buckets that have aged beynd a predefined date-stamp
+####         Uses inputs as multiple parsed metadata files in JSON format
+#### 
+###          Change Line 10 to specify a different path for json-parsed files from CLOUDIAN_METADATA entries
 
 PROCESSED_FILE_COUNT=0
 BUCKETNAME=prophecy-recordings-replicated

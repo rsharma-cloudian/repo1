@@ -1,4 +1,4 @@
- #!/usr/bin/bash
+#!/usr/bin/bash
 ##################################################################################################################
 ##Purpose: Captures Token Mapping from all nodes in the cluster (non-interactively)
 ##based on the output of `hsstool ring`

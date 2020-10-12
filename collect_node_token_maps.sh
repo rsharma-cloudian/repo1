@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+ #!/usr/bin/bash
 ##################################################################################################################
 ##Purpose: Captures Token Mapping from all nodes in the cluster (non-interactively)
 ##based on the output of `hsstool ring`
@@ -13,7 +13,6 @@ cat << EOF
 usage: $0 [-i|c]
 This script Captures Token Mapping from all nodes in the cluster (non-interactively)
 Use -h for options
-
 OPTIONS:
     -h      Show this message
     -i      non-interactively capture the token maps for each node and save to a file-name prefixed "initial_"

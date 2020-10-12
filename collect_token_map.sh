@@ -25,10 +25,10 @@ TSTAMP=$(date "+%Y.%m.%d-%H.%M.%S");
 
 case "$1" in
 	-i)
-		LOGFILE=initial_tokenmap_pernode_$TSTAMP.txt
+		LOGFILE=initial_node_tokenmap_pernode_$TSTAMP.txt
 	;;
 	-c)
-		LOGFILE=current_tokenmap_pernode_$TSTAMP.txt
+		LOGFILE=current_node_tokenmap_pernode_$TSTAMP.txt
 	;;
 	-h)
 		usage
@@ -80,7 +80,7 @@ IF_COLUMN=$(fetch_internal_interface)
 echo -en  "Using column:" $IF_COLUMN
 echo -en " for ethernet interface in $SERVICEMAP_FILE"
 echo -e "\n"
-echo "Saving token maps for ALL nodes.."
+echo "Saving per-node token maps for ALL nodes.."
 
 for i in `cat $SERVICEMAP_FILE | grep interfaces | awk -v N="$IF_COLUMN" '{print $N}' | sed 's/\"//g'|sed 's/\,//g'`;
     do

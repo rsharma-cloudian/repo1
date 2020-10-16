@@ -6,7 +6,7 @@ Using column: 6 for ethernet interface in /opt/cloudian/conf/cloudianservicemap.
 ##################################################################################################################
 ##Purpose: Captures rocksdb stats from all nodes in the cluster (non-interactively)
 ##Usage: ./collect_rocksdb_stats_allnodes.sh   //from any Cloudian Hyperstore Node with Cassandra Running 
-##based on the output of `hsstool rdb stats`
+##based on the output of `hsstool rdb -stats`
 #Version: 1.1
 #Changelog:
 #Comments/Bugs:rsharma@cloudian.com

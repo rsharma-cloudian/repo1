@@ -1,7 +1,3 @@
-cassandra PID on this node: 1948
-Internal IP on this node: 10.51.32.151
-Internal Interface used: ens4.130
-Using column: 6 for ethernet interface in /opt/cloudian/conf/cloudianservicemap.json
 #!/usr/bin/bash
 ##################################################################################################################
 ##Purpose: Captures rocksdb stats from all nodes in the cluster (non-interactively)

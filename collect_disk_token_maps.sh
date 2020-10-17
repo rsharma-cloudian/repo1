@@ -11,13 +11,13 @@ usage()
 {
 cat << EOF
 usage: $0 [-i|c]
-This script Captures Token Mapping from all nodes in the cluster (non-interactively)
+This script Captures Token Mapping for each disk on all nodes in the cluster (non-interactively)
 Use -h for options
 
 OPTIONS:
     -h      Show this message
-    -i      non-interactively capture the token maps for each node and save to a file-name prefixed "initial_disk_"
-    -c      non-interactively capture the token maps for each node and save to a file-name prefixed "current_disk_"
+    -i      non-interactively capture the token maps for each disk and save to a file-name prefixed "initial_disk_"
+    -c      non-interactively capture the token maps for each disk and save to a file-name prefixed "current_disk_"
 EOF
 }
 

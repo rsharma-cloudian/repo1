@@ -1,0 +1,27 @@
+IP="10.1.220.51"
+OUTFILE=output_$HOST.$TS
+KS=UserData_bf3aa56be847bd39ff3a7e66ac361cda
+CF=BucketReplication
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+NOCOLOR='\033[0m'
+
+function separator {
+echo -e "${LIGHTPURPLE}==============================================================${NOCOLOR}"
+}
+
+echo -e "Backing up Replication Queue for all buckets in ${CYAN}$KS${NOCOLOR}"
+echo "copy \"${KS}\".\"${CF}\" to 'brq_backup_${KS}';" |  /opt/cassandra/bin/cqlsh ${IP}
+
+separator;
+
+echo -e "Truncating BucketReplication Table for ${CYAN}$KS${NOCOLOR}"
+
+echo "TRUNCATE  \"${KS}\".\"${CF}\";" |  /opt/cassandra/bin/cqlsh ${IP}
+separator;
+
+echo -e "Filtering Data Entries, removing ACL Entry in the exported CSV"
+LC_ALL=C fgrep -w D brq_backup_${KS}  > brq_backup_${KS}_data.csv
+
+echo -e "Importing BucketReplication entries from brq_backup_${KS}_data.csv"
+echo "copy \"${KS}\".\"${CF}\" from 'brq_backup_${KS}_data.csv';" |  /opt/cassandra/bin/cqlsh "${IP}"

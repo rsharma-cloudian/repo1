@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 ##################################################################################################################
 ##Purpose: Analyzes Bucket Logger Output
 #Version: 1.1
@@ -154,7 +154,8 @@ EOF
 	separator
 	echo -en "${CYAN}Bucket Name:${NOCOLOR} " |tee -a $OUTPUTFILE
 	echo -en ${ORANGE}
-	cat $TOOLLOG | grep 'contains' | grep scanBucket | grep objects | awk '{print $7}'|tee -a $OUTPUTFILE
+	#cat $TOOLLOG | grep 'contains' | grep scanBucket | grep objects | awk '{print $7}'|tee -a $OUTPUTFILE
+	BUCKETNAME=`cat $TOOLLOG | grep 'contains' | grep scanBucket | grep objects | awk '{print $7}'`
 	echo -en "${CYAN}Bucket Prefix:${NOCOLOR}" |tee -a $OUTPUTFILE
 	echo -e "${DARKGRAY}$PREFIX"
         #echo -en
@@ -182,7 +183,8 @@ EOF
 
 	echo -en "${CYAN}Number of Objects under $PREFIX:${NOCOLOR}" |tee -a $OUTPUTFILE
 	echo -en ${ORANGE}
-	LC_ALL=C fgrep $PREFIX $OBJFILE| awk -F '|' '{print $3}'| egrep 'true|false' | wc -l |tee -a $OUTPUTFILE
+	#LC_ALL=C fgrep $PREFIX $OBJFILE| awk -F '|' '{print $3}'| egrep 'true|false' | wc -l |tee -a $OUTPUTFILE
+	LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE| awk -F '|' '{print $3}'| egrep 'true|false' | wc -l |tee -a $OUTPUTFILE
 
 	if [[ $VERSIONED=1 ]]
            then
@@ -193,11 +195,11 @@ EOF
 
 	echo -e "${CYAN}Sample object under: $PREFIX:${NOCOLOR}" |tee -a $OUTPUTFILE
         echo -e ${YELLOW}
-        SAMPLEOBJ=`LC_ALL=C fgrep $PREFIX $OBJFILE | head -1`
+        SAMPLEOBJ=`LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE | head -1`
         echo $SAMPLEOBJ |tee -a $OUTPUTFILE
         char='/'
         OBJDEPTH=`echo "${SAMPLEOBJ}" | awk -F"${char}" '{print NF-1}'`
-        echo -e "${CYAN}Object exists at depth: "${LIGHTRED}$OBJDEPTH${NOCOLOR}
+        echo -e "${CYAN}In this sample, Object exists at depth: "${LIGHTRED}$OBJDEPTH${NOCOLOR}
         while [ $OBJDEPTH -ge 2 ];
                 do
                    echo -en "${ORANGE}Depth $[OBJDEPTH - 1]:${NOCOLOR}";
@@ -211,10 +213,10 @@ EOF
 		then
 			echo -e "${CYAN}Total Number of Delete Markers under partition:$PREFIX:${NOCOLOR}" |tee -a $OUTPUTFILE
 			echo -e "${GREY}(can take very long ..an hour or two for large buckets..)"
-			echo -e ${DARKGRAY}"Running: 'time LC_ALL=C fgrep $PREFIX $OBJFILE | awk -F '|' '{print \$3}' | grep -w true | wc -l'"
+			echo -e ${DARKGRAY}"Running: 'time LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE | awk -F '|' '{print \$3}' | grep -w true | wc -l'"
 			echo -e ${DARKGRAY}"on Filesize: `ls  -lh $OBJFILE | awk '{print $5 " " $9}'`"
 			echo -e ${ORANGE}
-			LC_ALL=C fgrep $PREFIX $OBJFILE | awk -F '|' '{print $3}' | grep -w true | wc -l |tee -a $OUTPUTFILE
+			LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE | awk -F '|' '{print $3}' | grep -w true | wc -l |tee -a $OUTPUTFILE
 			separator
 	fi
 	echo "Generated Logfile: $OUTPUTFILE"
@@ -223,25 +225,30 @@ EOF
 ##########################analyzeprefix-depth##############################################################
 
        analyzeprefix-depth(){
+       BUCKETNAME=`cat $TOOLLOG | grep 'contains' | grep scanBucket | grep objects | awk '{print $7}'`
        echo -en "Number of files at depth $DEPTH: "
        DEPTHSEEK=$(( DEPTH += 1 ))
-       LC_ALL=C fgrep $PREFIX $OBJFILE| cut -f $DEPTHSEEK -d / |egrep 'true|false' | wc -l |tee -a $OUTPUTFILE
+       LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE| cut -f $DEPTHSEEK -d / |egrep 'true|false' | wc -l |tee -a $OUTPUTFILE
+       echo -e ${DARKGRAY}"To view Object names run: 'LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE| cut -f $DEPTHSEEK -d / |egrep 'true|false''"
 
         separator
-        echo -e "${CYAN}Sample object for prefix: $PREFIX:${NOCOLOR}" |tee -a $OUTPUTFILE
+        echo -e "${CYAN}Sample objects for prefix: $PREFIX:${NOCOLOR}" at specified depth |tee -a $OUTPUTFILE
         echo -e ${ORANGE}
-        SAMPLEOBJ=`LC_ALL=C head -20 $OBJFILE |tail -1`
-        echo $SAMPLEOBJ |tee -a $OUTPUTFILE
+        #SAMPLEOBJ=`LC_ALL=C head -20 $OBJFILE |tail -1`
+	#SAMPLEOBJ=`LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE | head -20| tail -1`
+	#SAMPLEOBJ=`LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE | head -20| tail -1`
+ 	LC_ALL=C fgrep "$BUCKETNAME/$PREFIX" $OBJFILE| cut -f $DEPTHSEEK -d / |egrep 'true|false' |head -10
+        #echo $SAMPLEOBJ |tee -a $OUTPUTFILE
         char='/'
-        OBJDEPTH=`echo "${SAMPLEOBJ}" | awk -F"${char}" '{print NF-1}'`
-        echo -e "${CYAN}Object exists at depth: "${LIGHTRED}$OBJDEPTH${NOCOLOR}
-        while [ $OBJDEPTH -ge 2 ];
-                do
-                   echo -en "${ORANGE}Depth $[OBJDEPTH - 1]:${NOCOLOR}";
-                   echo $SAMPLEOBJ|cut  -f $OBJDEPTH -d / ;
-                   (( --OBJDEPTH ));
-                   echo "=-=--=-=-=--=-=";
-                done |tee -a $OUTPUTFILE
+        #OBJDEPTH=`echo "${SAMPLEOBJ}" | awk -F"${char}" '{print NF-1}'`
+        #echo -e "${CYAN}In this sample, object exists at depth: "${LIGHTRED}$OBJDEPTH${NOCOLOR}
+        #while [ $OBJDEPTH -ge 2 ];
+        #        do
+        #           echo -en "${ORANGE}Depth $[OBJDEPTH - 1]:${NOCOLOR}";
+        #           echo $SAMPLEOBJ|cut  -f $OBJDEPTH -d / ;
+        #           (( --OBJDEPTH ));
+        #           echo "=-=--=-=-=--=-=";
+        #        done |tee -a $OUTPUTFILE
         separator
 	}
 
@@ -302,8 +309,9 @@ case "$1" in
 				echo -e "Getting unique folder count at depth:$DEPTH"
 				DEPTHSEEK=$(( DEPTH += 1 ))
                                 echo -e ${YELLOW}
-				LC_ALL=C cat $OBJFILE  |  cut -f $DEPTHSEEK -d / | sort |uniq -c |grep -v '|' |wc -l
-
+				LC_ALL=C cat $OBJFILE  |  cut -f $DEPTHSEEK -d / | sort |uniq -c |grep -v '|' | awk '{print $2}'|sed '/^$/d'|wc -l
+				echo -e ${DARKGRAY}"To get the list of unique folder names, run:"
+				echo -e ${DARKGRAY}"LC_ALL=C cat $OBJFILE  |  cut -f $DEPTHSEEK -d / | sort |uniq -c |grep -v '|' | awk '{print \$2}'|sed '/^$/d'"
 			elif
 			   [[ ("$1" == '--dest') && ($3 == '--prefix') && ($5 == '--depth') && ("$#" -eq 6) ]]
 			    then
